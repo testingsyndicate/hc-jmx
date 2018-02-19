@@ -5,31 +5,39 @@ import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import javax.management.*;
 import java.lang.management.ManagementFactory;
 import java.util.Hashtable;
+import java.util.concurrent.atomic.AtomicInteger;
 
-public class HCJMX
+public class HcJmx
     extends StandardMBean implements PoolStatsMXBean {
 
+    private static final AtomicInteger COUNT = new AtomicInteger();
     private static final MBeanServer SERVER = ManagementFactory.getPlatformMBeanServer();
-    private static final String JMX_DOMAIN = "com.testingsyndicate.httpclient";
+    private static final String JMX_DOMAIN = "org.apache.httpcomponents.httpclient";
+    private static final String DEFAULT_NAME = "default-%s";
 
     private final PoolingHttpClientConnectionManager connectionManager;
 
-    HCJMX(PoolingHttpClientConnectionManager connectionManager) {
+    HcJmx(PoolingHttpClientConnectionManager connectionManager) {
         super(PoolStatsMXBean.class, true);
         this.connectionManager = connectionManager;
     }
 
-    public static void register(PoolingHttpClientConnectionManager connectionManager, String name) throws JMException {
-        HCJMX bean = new HCJMX(connectionManager);
-
-        SERVER.registerMBean(bean, getObjectName(name));
+    public static ObjectName register(PoolingHttpClientConnectionManager connectionManager) throws JMException {
+        String name = String.format(DEFAULT_NAME, COUNT.incrementAndGet());
+        return register(connectionManager, name);
     }
 
-    public static void unregister(String name) throws JMException {
-        ObjectName jmxName = getObjectName(name);
+    public static ObjectName register(PoolingHttpClientConnectionManager connectionManager, String name) throws JMException {
+        HcJmx bean = new HcJmx(connectionManager);
 
-        if (SERVER.isRegistered(jmxName)) {
-            SERVER.unregisterMBean(jmxName);
+        ObjectName jmxName = getObjectName(name);
+        SERVER.registerMBean(bean, jmxName);
+        return jmxName;
+    }
+
+    public static void unregister(ObjectName name) throws JMException {
+        if (SERVER.isRegistered(name)) {
+            SERVER.unregisterMBean(name);
         }
     }
 
