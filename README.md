@@ -39,7 +39,7 @@ Available to view via JMX compatible monitoring and profiling tools such as AppD
 PoolingHttpClientConnectionManager connectionManager = new PoolingHttpClientConnectionManager();
 
 // Register it with the name "default"
-HCJMX.register(connectionManager, "default");
+HcJmx.register(connectionManager, "default");
 ```
 
 ### Screenshots

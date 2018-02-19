@@ -16,14 +16,14 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 import static org.mockito.Mockito.mock;
 
-public class HCJMXTest {
+public class HcJmxTest {
 
     private static final MBeanServer SERVER = ManagementFactory.getPlatformMBeanServer();
 
     private ObjectName name;
     private PoolingHttpClientConnectionManager mockConnectionManager;
     private PoolStats mockPoolStats;
-    private HCJMX sut;
+    private HcJmx sut;
 
     @Before
     public void setUp() throws MalformedObjectNameException {
@@ -34,7 +34,7 @@ public class HCJMXTest {
 
         given(mockConnectionManager.getTotalStats()).willReturn(mockPoolStats);
 
-        sut = new HCJMX(mockConnectionManager);
+        sut = new HcJmx(mockConnectionManager);
     }
 
     @After
@@ -141,7 +141,7 @@ public class HCJMXTest {
     @Test
     public void registersMBean() throws JMException {
         // given
-        HCJMX.register(mockConnectionManager, "test");
+        HcJmx.register(mockConnectionManager, "test");
 
         // when
         MBeanInfo actual = SERVER.getMBeanInfo(name);
@@ -156,7 +156,7 @@ public class HCJMXTest {
         SERVER.registerMBean(sut, name);
 
         // when
-        HCJMX.unregister("test");
+        HcJmx.unregister("test");
         boolean actual = SERVER.isRegistered(name);
 
         // then

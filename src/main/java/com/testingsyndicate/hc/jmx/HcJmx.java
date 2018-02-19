@@ -6,7 +6,7 @@ import javax.management.*;
 import java.lang.management.ManagementFactory;
 import java.util.Hashtable;
 
-public class HCJMX
+public class HcJmx
     extends StandardMBean implements PoolStatsMXBean {
 
     private static final MBeanServer SERVER = ManagementFactory.getPlatformMBeanServer();
@@ -14,13 +14,13 @@ public class HCJMX
 
     private final PoolingHttpClientConnectionManager connectionManager;
 
-    HCJMX(PoolingHttpClientConnectionManager connectionManager) {
+    HcJmx(PoolingHttpClientConnectionManager connectionManager) {
         super(PoolStatsMXBean.class, true);
         this.connectionManager = connectionManager;
     }
 
     public static void register(PoolingHttpClientConnectionManager connectionManager, String name) throws JMException {
-        HCJMX bean = new HCJMX(connectionManager);
+        HcJmx bean = new HcJmx(connectionManager);
 
         SERVER.registerMBean(bean, getObjectName(name));
     }
