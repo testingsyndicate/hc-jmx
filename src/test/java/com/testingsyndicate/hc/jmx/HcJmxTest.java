@@ -20,14 +20,12 @@ public class HcJmxTest {
 
     private static final MBeanServer SERVER = ManagementFactory.getPlatformMBeanServer();
 
-    private ObjectName name;
     private PoolingHttpClientConnectionManager mockConnectionManager;
     private PoolStats mockPoolStats;
     private HcJmx sut;
 
     @Before
     public void setUp() throws MalformedObjectNameException {
-        name = new ObjectName("org.apache.httpcomponents.httpclient:name=test,type=PoolingHttpClientConnectionManager");
 
         mockPoolStats = mock(PoolStats.class);
         mockConnectionManager = mock(PoolingHttpClientConnectionManager.class);
@@ -39,7 +37,10 @@ public class HcJmxTest {
 
     @After
     public void after() throws JMException {
-        if (SERVER.isRegistered(name)) {
+        ObjectName query = new ObjectName("org.apache.httpcomponents.httpclient:name=*,type=PoolingHttpClientConnectionManager");
+        Set<ObjectName> names = SERVER.queryNames(query, null);
+
+        for (ObjectName name : names) {
             SERVER.unregisterMBean(name);
         }
     }
@@ -139,24 +140,38 @@ public class HcJmxTest {
     }
 
     @Test
-    public void registersMBean() throws JMException {
+    public void registersMBeanWithName() throws JMException {
         // given
-        HcJmx.register(mockConnectionManager, "test");
+        ObjectName name = HcJmx.register(mockConnectionManager, "wibble");
 
         // when
         MBeanInfo actual = SERVER.getMBeanInfo(name);
 
         // then
+        assertThat(name.toString())
+                .isEqualTo("org.apache.httpcomponents.httpclient:name=wibble,type=PoolingHttpClientConnectionManager");
         assertThat(actual).isNotNull();
+    }
+
+    @Test
+    public void providesDefaultNameOnRegistration() throws JMException {
+        // given
+
+        // when
+        ObjectName actual = HcJmx.register(mockConnectionManager);
+
+        // then
+        assertThat(actual.toString())
+                .matches("org\\.apache\\.httpcomponents\\.httpclient:name=default-[0-9]+,type=PoolingHttpClientConnectionManager");
     }
 
     @Test
     public void unregistersMBean() throws JMException {
         // given
-        SERVER.registerMBean(sut, name);
+        ObjectName name = HcJmx.register(mockConnectionManager);
 
         // when
-        HcJmx.unregister("test");
+        HcJmx.unregister(name);
         boolean actual = SERVER.isRegistered(name);
 
         // then
