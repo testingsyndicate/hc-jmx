@@ -10,7 +10,7 @@ public class HCJMX
     extends StandardMBean implements PoolStatsMXBean {
 
     private static final MBeanServer SERVER = ManagementFactory.getPlatformMBeanServer();
-    private static final String JMX_DOMAIN = "com.testingsyndicate.httpclient";
+    private static final String JMX_DOMAIN = "org.apache.httpcomponents.httpclient";
 
     private final PoolingHttpClientConnectionManager connectionManager;
 

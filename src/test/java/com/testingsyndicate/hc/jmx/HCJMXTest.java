@@ -27,7 +27,7 @@ public class HCJMXTest {
 
     @Before
     public void setUp() throws MalformedObjectNameException {
-        name = new ObjectName("com.testingsyndicate.httpclient:name=test,type=PoolingHttpClientConnectionManager");
+        name = new ObjectName("org.apache.httpcomponents.httpclient:name=test,type=PoolingHttpClientConnectionManager");
 
         mockPoolStats = mock(PoolStats.class);
         mockConnectionManager = mock(PoolingHttpClientConnectionManager.class);
