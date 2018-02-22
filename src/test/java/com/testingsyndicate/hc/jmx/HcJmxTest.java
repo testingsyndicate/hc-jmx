@@ -59,7 +59,7 @@ public class HcJmxTest {
 
         // then
         assertThat(actual.toString())
-                .matches("org\\.apache\\.httpcomponents\\.httpclient:name=default-[0-9]+,type=PoolingHttpClientConnectionManager");
+                .matches("org\\.apache\\.httpcomponents\\.httpclient:name=default-([a-f0-9-]{36}),type=PoolingHttpClientConnectionManager");
     }
 
     @Test

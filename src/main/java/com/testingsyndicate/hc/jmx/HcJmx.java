@@ -8,20 +8,19 @@ import javax.management.MalformedObjectNameException;
 import javax.management.ObjectName;
 import java.lang.management.ManagementFactory;
 import java.util.Hashtable;
-import java.util.concurrent.atomic.AtomicInteger;
+import java.util.UUID;
 
-public class HcJmx {
+public final class HcJmx {
 
     private static final String JMX_DOMAIN = "org.apache.httpcomponents.httpclient";
     private static final String DEFAULT_NAME = "default-%s";
-    private static final AtomicInteger COUNT = new AtomicInteger();
     private static final MBeanServer SERVER = ManagementFactory.getPlatformMBeanServer();
 
     private HcJmx() {
     }
 
     public static ObjectName register(PoolingHttpClientConnectionManager connectionManager) throws JMException {
-        String name = String.format(DEFAULT_NAME, COUNT.incrementAndGet());
+        String name = String.format(DEFAULT_NAME, UUID.randomUUID());
         return register(connectionManager, name);
     }
 
