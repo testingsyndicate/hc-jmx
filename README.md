@@ -3,7 +3,7 @@
 [![Maven Central](https://img.shields.io/maven-central/v/com.testingsyndicate/hc-jmx.svg)](https://mvnrepository.com/artifact/com.testingsyndicate/hc-jmx)
 [![GitHub license](https://img.shields.io/github/license/goughy000/hc-jmx.svg)](https://github.com/goughy000/hc-jmx/blob/master/LICENSE)
 
-## JMX MXBean for Apache HttpComponents HttpClient 4.5+
+## JMX MXBean for Apache HttpComponents HttpClient 4.5.x
 
 ### Summary
 
@@ -39,7 +39,7 @@ Available to view via JMX compatible monitoring and profiling tools such as AppD
 PoolingHttpClientConnectionManager connectionManager = new PoolingHttpClientConnectionManager();
 
 // Register it with the name "default"
-HcJmx.register(connectionManager);
+HcJmx.getInstance().register(connectionManager);
 ```
 
 ### Screenshots

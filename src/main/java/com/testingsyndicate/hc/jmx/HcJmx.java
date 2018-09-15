@@ -14,9 +14,21 @@ public final class HcJmx {
 
   private static final String JMX_DOMAIN = "org.apache.httpcomponents.httpclient";
   private static final String DEFAULT_NAME = "default-%s";
-  private static final MBeanServer SERVER = ManagementFactory.getPlatformMBeanServer();
+  private static final HcJmx INSTANCE = new HcJmx(ManagementFactory.getPlatformMBeanServer());
 
-  private HcJmx() {
+  private final MBeanServer server;
+
+  HcJmx(MBeanServer server) {
+    this.server = server;
+  }
+
+  /**
+   * Get an instance of {@link HcJmx} that interfaces with the default PlatformMBeanServer
+   *
+   * @return the instance of {@link HcJmx}
+   */
+  public static HcJmx getInstance() {
+    return INSTANCE;
   }
 
   /**
@@ -26,7 +38,7 @@ public final class HcJmx {
    * @return {@link ObjectName} pointer to the registered instance
    * @throws JMException thrown if the {@link PoolingHttpClientConnectionManager} cannot be registered
    */
-  public static ObjectName register(PoolingHttpClientConnectionManager connectionManager) throws JMException {
+  public ObjectName register(PoolingHttpClientConnectionManager connectionManager) throws JMException {
     String name = String.format(DEFAULT_NAME, UUID.randomUUID());
     return register(connectionManager, name);
   }
@@ -39,11 +51,11 @@ public final class HcJmx {
    * @return {@link ObjectName} pointer to the registered instance
    * @throws JMException thrown if the {@link PoolingHttpClientConnectionManager} cannot be registered
    */
-  public static ObjectName register(PoolingHttpClientConnectionManager connectionManager, String name) throws JMException {
+  public ObjectName register(PoolingHttpClientConnectionManager connectionManager, String name) throws JMException {
     PoolingHttpClientConnectionManagerMXBean bean = new PoolingHttpClientConnectionManagerMXBean(connectionManager);
 
     ObjectName jmxName = getObjectName(name);
-    SERVER.registerMBean(bean, jmxName);
+    server.registerMBean(bean, jmxName);
     return jmxName;
   }
 
@@ -53,9 +65,9 @@ public final class HcJmx {
    * @param name {@link ObjectName} to unregister
    * @throws JMException if the MXBean cannot be unregistered
    */
-  public static synchronized void unregister(ObjectName name) throws JMException {
-    if (SERVER.isRegistered(name)) {
-      SERVER.unregisterMBean(name);
+  public synchronized void unregister(ObjectName name) throws JMException {
+    if (server.isRegistered(name)) {
+      server.unregisterMBean(name);
     }
   }
 
