@@ -2,18 +2,18 @@ package com.testingsyndicate.hc.jmx;
 
 public interface PoolStatsMXBean {
 
-    int getMaxTotal();
+  int getMaxTotal();
 
-    int getDefaultMaxPerRoute();
+  int getDefaultMaxPerRoute();
 
-    int getLeased();
+  int getLeased();
 
-    int getPending();
+  int getPending();
 
-    int getAvailable();
+  int getAvailable();
 
-    int getMax();
+  int getMax();
 
-    int getRoutesTotal();
+  int getRoutesTotal();
 
 }
