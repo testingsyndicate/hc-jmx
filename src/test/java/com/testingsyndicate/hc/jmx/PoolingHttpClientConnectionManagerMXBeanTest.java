@@ -16,113 +16,113 @@ import static org.mockito.Mockito.mock;
 
 public class PoolingHttpClientConnectionManagerMXBeanTest {
 
-    private PoolingHttpClientConnectionManager mockConnectionManager;
-    private PoolStats mockPoolStats;
-    private PoolingHttpClientConnectionManagerMXBean sut;
+  private PoolingHttpClientConnectionManager mockConnectionManager;
+  private PoolStats mockPoolStats;
+  private PoolingHttpClientConnectionManagerMXBean sut;
 
-    @Before
-    public void setUp() throws MalformedObjectNameException {
+  @Before
+  public void setUp() throws MalformedObjectNameException {
 
-        mockPoolStats = mock(PoolStats.class);
-        mockConnectionManager = mock(PoolingHttpClientConnectionManager.class);
+    mockPoolStats = mock(PoolStats.class);
+    mockConnectionManager = mock(PoolingHttpClientConnectionManager.class);
 
-        given(mockConnectionManager.getTotalStats()).willReturn(mockPoolStats);
+    given(mockConnectionManager.getTotalStats()).willReturn(mockPoolStats);
 
-        sut = new PoolingHttpClientConnectionManagerMXBean(mockConnectionManager);
-    }
+    sut = new PoolingHttpClientConnectionManagerMXBean(mockConnectionManager);
+  }
 
-    @Test
-    public void returnsMaxTotal() {
-        // given
-        given(mockConnectionManager.getMaxTotal()).willReturn(99);
+  @Test
+  public void returnsMaxTotal() {
+    // given
+    given(mockConnectionManager.getMaxTotal()).willReturn(99);
 
-        // when
-        int actual = sut.getMaxTotal();
+    // when
+    int actual = sut.getMaxTotal();
 
-        // then
-        then(mockConnectionManager).should().getMaxTotal();
-        assertThat(actual).isEqualTo(99);
-    }
+    // then
+    then(mockConnectionManager).should().getMaxTotal();
+    assertThat(actual).isEqualTo(99);
+  }
 
-    @Test
-    public void returnsDefaultMaxPerRoute() {
-        // given
-        given(mockConnectionManager.getDefaultMaxPerRoute()).willReturn(100);
+  @Test
+  public void returnsDefaultMaxPerRoute() {
+    // given
+    given(mockConnectionManager.getDefaultMaxPerRoute()).willReturn(100);
 
-        // when
-        int actual = sut.getDefaultMaxPerRoute();
+    // when
+    int actual = sut.getDefaultMaxPerRoute();
 
-        // then
-        then(mockConnectionManager).should().getDefaultMaxPerRoute();
-        assertThat(actual).isEqualTo(100);
-    }
+    // then
+    then(mockConnectionManager).should().getDefaultMaxPerRoute();
+    assertThat(actual).isEqualTo(100);
+  }
 
-    @Test
-    public void returnsLeased() {
-        // given
-        given(mockPoolStats.getLeased()).willReturn(101);
+  @Test
+  public void returnsLeased() {
+    // given
+    given(mockPoolStats.getLeased()).willReturn(101);
 
-        // when
-        int actual = sut.getLeased();
+    // when
+    int actual = sut.getLeased();
 
-        // then
-        then(mockPoolStats).should().getLeased();
-        assertThat(actual).isEqualTo(101);
-    }
+    // then
+    then(mockPoolStats).should().getLeased();
+    assertThat(actual).isEqualTo(101);
+  }
 
-    @Test
-    public void returnsPending() {
-        // given
-        given(mockPoolStats.getPending()).willReturn(102);
+  @Test
+  public void returnsPending() {
+    // given
+    given(mockPoolStats.getPending()).willReturn(102);
 
-        // when
-        int actual = sut.getPending();
+    // when
+    int actual = sut.getPending();
 
-        // then
-        then(mockPoolStats).should().getPending();
-        assertThat(actual).isEqualTo(102);
-    }
+    // then
+    then(mockPoolStats).should().getPending();
+    assertThat(actual).isEqualTo(102);
+  }
 
-    @Test
-    public void returnsAvailable() {
-        // given
-        given(mockPoolStats.getAvailable()).willReturn(103);
+  @Test
+  public void returnsAvailable() {
+    // given
+    given(mockPoolStats.getAvailable()).willReturn(103);
 
-        // when
-        int actual = sut.getAvailable();
+    // when
+    int actual = sut.getAvailable();
 
-        // then
-        then(mockPoolStats).should().getAvailable();
-        assertThat(actual).isEqualTo(103);
-    }
+    // then
+    then(mockPoolStats).should().getAvailable();
+    assertThat(actual).isEqualTo(103);
+  }
 
-    @Test
-    public void returnsMax() {
-        // given
-        given(mockPoolStats.getMax()).willReturn(104);
+  @Test
+  public void returnsMax() {
+    // given
+    given(mockPoolStats.getMax()).willReturn(104);
 
-        // when
-        int actual = sut.getMax();
+    // when
+    int actual = sut.getMax();
 
-        // then
-        then(mockPoolStats).should().getMax();
-        assertThat(actual).isEqualTo(104);
-    }
+    // then
+    then(mockPoolStats).should().getMax();
+    assertThat(actual).isEqualTo(104);
+  }
 
-    @Test
-    public void returnsRoutesTotal() {
-        // given
-        Set<HttpRoute> mockRoutes = mock(Set.class);
-        given(mockRoutes.size()).willReturn(3);
-        given(mockConnectionManager.getRoutes()).willReturn(mockRoutes);
+  @Test
+  public void returnsRoutesTotal() {
+    // given
+    Set<HttpRoute> mockRoutes = mock(Set.class);
+    given(mockRoutes.size()).willReturn(3);
+    given(mockConnectionManager.getRoutes()).willReturn(mockRoutes);
 
-        // when
-        int actual = sut.getRoutesTotal();
+    // when
+    int actual = sut.getRoutesTotal();
 
-        // then
-        then(mockConnectionManager).should().getRoutes();
-        then(mockRoutes).should().size();
-        assertThat(actual).isEqualTo(3);
-    }
+    // then
+    then(mockConnectionManager).should().getRoutes();
+    then(mockRoutes).should().size();
+    assertThat(actual).isEqualTo(3);
+  }
 
 }
