@@ -14,27 +14,60 @@ public final class HcJmx {
 
   private static final String JMX_DOMAIN = "org.apache.httpcomponents.httpclient";
   private static final String DEFAULT_NAME = "default-%s";
-  private static final MBeanServer SERVER = ManagementFactory.getPlatformMBeanServer();
+  private static final HcJmx INSTANCE = new HcJmx(ManagementFactory.getPlatformMBeanServer());
 
-  private HcJmx() {
+  private final MBeanServer server;
+
+  HcJmx(MBeanServer server) {
+    this.server = server;
   }
 
-  public static ObjectName register(PoolingHttpClientConnectionManager connectionManager) throws JMException {
+  /**
+   * Get an instance of {@link HcJmx} that interfaces with the default PlatformMBeanServer
+   *
+   * @return the instance of {@link HcJmx}
+   */
+  public static HcJmx getInstance() {
+    return INSTANCE;
+  }
+
+  /**
+   * Registers a {@link PoolingHttpClientConnectionManager} with JMX, using a default generated name
+   *
+   * @param connectionManager {@link PoolingHttpClientConnectionManager} to be registered with JMX
+   * @return {@link ObjectName} pointer to the registered instance
+   * @throws JMException thrown if the {@link PoolingHttpClientConnectionManager} cannot be registered
+   */
+  public ObjectName register(PoolingHttpClientConnectionManager connectionManager) throws JMException {
     String name = String.format(DEFAULT_NAME, UUID.randomUUID());
     return register(connectionManager, name);
   }
 
-  public static ObjectName register(PoolingHttpClientConnectionManager connectionManager, String name) throws JMException {
+  /**
+   * Registers a {@link PoolingHttpClientConnectionManager} with JMX, using a supplied name
+   *
+   * @param connectionManager {@link PoolingHttpClientConnectionManager} to be registered with JMX
+   * @param name name to be used when registering the MXBean with JMX
+   * @return {@link ObjectName} pointer to the registered instance
+   * @throws JMException thrown if the {@link PoolingHttpClientConnectionManager} cannot be registered
+   */
+  public ObjectName register(PoolingHttpClientConnectionManager connectionManager, String name) throws JMException {
     PoolingHttpClientConnectionManagerMXBean bean = new PoolingHttpClientConnectionManagerMXBean(connectionManager);
 
     ObjectName jmxName = getObjectName(name);
-    SERVER.registerMBean(bean, jmxName);
+    server.registerMBean(bean, jmxName);
     return jmxName;
   }
 
-  public static synchronized void unregister(ObjectName name) throws JMException {
-    if (SERVER.isRegistered(name)) {
-      SERVER.unregisterMBean(name);
+  /**
+   * Unregisters an MXBean from JMX
+   *
+   * @param name {@link ObjectName} to unregister
+   * @throws JMException if the MXBean cannot be unregistered
+   */
+  public synchronized void unregister(ObjectName name) throws JMException {
+    if (server.isRegistered(name)) {
+      server.unregisterMBean(name);
     }
   }
 
