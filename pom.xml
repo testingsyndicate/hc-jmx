@@ -6,7 +6,7 @@
 
     <groupId>com.testingsyndicate</groupId>
     <artifactId>hc-jmx</artifactId>
-    <version>0.4-SNAPSHOT</version>
+    <version>1.0.0</version>
 
     <name>HC-JMX</name>
     <description>Expose PoolingHttpClientConnectionManager statistics via JMX</description>
