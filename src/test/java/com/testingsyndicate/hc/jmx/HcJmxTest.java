@@ -1,17 +1,17 @@
 package com.testingsyndicate.hc.jmx;
 
+import org.apache.http.client.HttpClient;
+import org.apache.http.conn.HttpClientConnectionManager;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 
-import javax.management.JMException;
-import javax.management.MBeanServer;
-import javax.management.ObjectName;
-
+import javax.management.*;
 import java.lang.management.ManagementFactory;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.shouldHaveThrown;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
@@ -72,7 +72,7 @@ public class HcJmxTest {
   }
 
   @Test
-  public void providesDefaultNameOnRegistration() throws JMException {
+  public void providesDefaultNameOnRegistration() {
     // given
 
     // when
@@ -110,5 +110,117 @@ public class HcJmxTest {
     verify(mockServer).isRegistered(eq(name));
     verify(mockServer, never()).unregisterMBean(any(ObjectName.class));
   }
+
+  @Test
+  public void wrapsExceptionWhenServerException() throws JMException {
+    // given
+    MBeanRegistrationException cause = new MBeanRegistrationException(new RuntimeException());
+    when(mockServer.registerMBean(any(), any(ObjectName.class)))
+        .thenThrow(cause);
+
+    // when
+    try {
+      sut.register(mockConnectionManager);
+      shouldHaveThrown(HcJmxException.class);
+    } catch (HcJmxException actual) {
+      // then
+      assertThat(actual)
+          .hasMessage("Unable to register")
+          .hasCause(cause);
+    }
+  }
+
+  @Test
+  public void throwsExceptionWhenNoManager() {
+    // given
+    HttpClient client = new NoManager();
+
+    // when
+    try {
+      sut.register(client);
+      shouldHaveThrown(HcJmxException.class);
+    } catch (HcJmxException actual) {
+      // then
+      assertThat(actual)
+          .hasMessage("Unable to extract ConnectionManager from HttpClient")
+          .hasCauseInstanceOf(NoSuchFieldException.class);
+    }
+  }
+
+  @Test
+  public void throwsExceptionWhenNullManager() {
+    // given
+    HttpClient client = new HasManager(null);
+
+    // when
+    try {
+      sut.register(client);
+      shouldHaveThrown(HcJmxException.class);
+    } catch (HcJmxException actual) {
+      // then
+      assertThat(actual)
+          .hasMessage("HttpClient has no ConnectionManager")
+          .hasNoCause();
+    }
+  }
+
+  @Test
+  public void throwsExceptionWhenNotPool() {
+    // given
+    HttpClient client = new HasManager(mock(HttpClientConnectionManager.class));
+
+    // when
+    try {
+      sut.register(client);
+      shouldHaveThrown(HcJmxException.class);
+    } catch (HcJmxException actual) {
+      // then
+      assertThat(actual)
+          .hasMessage("HttpClient is using an unsupported HttpClientConnectionManager")
+          .hasCauseInstanceOf(ClassCastException.class);
+    }
+  }
+
+  @Test
+  public void registersMBeanWhenClientContainsPool() throws NotCompliantMBeanException, InstanceAlreadyExistsException, MBeanRegistrationException {
+    // given
+    HttpClient client = new HasManager(mockConnectionManager);
+
+    // when
+    sut.register(client);
+    ArgumentCaptor<PoolingHttpClientConnectionManagerMXBean> captor = ArgumentCaptor.forClass(PoolingHttpClientConnectionManagerMXBean.class);
+    verify(mockServer).registerMBean(captor.capture(), any(ObjectName.class));
+    PoolingHttpClientConnectionManagerMXBean actual = captor.getValue();
+
+    // then
+    assertThat(actual)
+        .isNotNull()
+        .hasFieldOrPropertyWithValue("connectionManager", mockConnectionManager);
+  }
+
+  @Test
+  public void registersWithNameWhenClientContainsPool() {
+    // given
+    HttpClient client = new HasManager(mockConnectionManager);
+
+    // when
+    ObjectName actual = sut.register(client, "my-client");
+
+    // then
+    assertThat(actual.toString())
+        .isEqualTo("org.apache.httpcomponents.httpclient:name=my-client,type=PoolingHttpClientConnectionManager");
+  }
+
+  private static final class HasManager extends TestClient {
+
+    private HttpClientConnectionManager connManager;
+
+    HasManager(HttpClientConnectionManager manager) {
+      this.connManager = manager;
+    }
+
+  }
+
+  private static final class NoManager extends TestClient { }
 
 }
