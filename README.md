@@ -42,6 +42,16 @@ PoolingHttpClientConnectionManager connectionManager = new PoolingHttpClientConn
 HcJmx.getInstance().register(connectionManager);
 ```
 
+```java
+// Or pass a Client directly (extracts PoolingHttpClientConnectionManager using reflection)
+HttpClient client = HttpClients.custom()
+    .setMaxConnPerRoute(10)
+    .setMaxConnTotal(15)
+    .build();
+
+HcJmx.getInstance().register(client);
+```
+
 ### Screenshots
 
 Metrics shown in VisualVM
