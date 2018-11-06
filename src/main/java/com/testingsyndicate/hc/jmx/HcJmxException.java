@@ -1,6 +1,6 @@
 package com.testingsyndicate.hc.jmx;
 
-class HcJmxException extends RuntimeException {
+public class HcJmxException extends RuntimeException {
 
   HcJmxException(String message) {
     super(message);
