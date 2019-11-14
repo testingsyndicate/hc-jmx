@@ -19,8 +19,18 @@ class PoolingHttpClientConnectionManagerMXBean extends StandardMBean implements 
   }
 
   @Override
+  public void setMaxTotal(int max) {
+    connectionManager.setMaxTotal(max);
+  }
+
+  @Override
   public int getDefaultMaxPerRoute() {
     return connectionManager.getDefaultMaxPerRoute();
+  }
+
+  @Override
+  public void setDefaultMaxPerRoute(int max) {
+    connectionManager.setDefaultMaxPerRoute(max);
   }
 
   @Override
@@ -36,11 +46,6 @@ class PoolingHttpClientConnectionManagerMXBean extends StandardMBean implements 
   @Override
   public int getAvailable() {
     return connectionManager.getTotalStats().getAvailable();
-  }
-
-  @Override
-  public int getMax() {
-    return connectionManager.getTotalStats().getMax();
   }
 
   @Override

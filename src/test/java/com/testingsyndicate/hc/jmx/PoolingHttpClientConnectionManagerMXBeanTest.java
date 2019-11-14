@@ -6,13 +6,13 @@ import org.apache.http.pool.PoolStats;
 import org.junit.Before;
 import org.junit.Test;
 
-import javax.management.MalformedObjectNameException;
 import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 
 public class PoolingHttpClientConnectionManagerMXBeanTest {
 
@@ -21,7 +21,7 @@ public class PoolingHttpClientConnectionManagerMXBeanTest {
   private PoolingHttpClientConnectionManagerMXBean sut;
 
   @Before
-  public void setUp() throws MalformedObjectNameException {
+  public void setUp() {
 
     mockPoolStats = mock(PoolStats.class);
     mockConnectionManager = mock(PoolingHttpClientConnectionManager.class);
@@ -97,19 +97,6 @@ public class PoolingHttpClientConnectionManagerMXBeanTest {
   }
 
   @Test
-  public void returnsMax() {
-    // given
-    given(mockPoolStats.getMax()).willReturn(104);
-
-    // when
-    int actual = sut.getMax();
-
-    // then
-    then(mockPoolStats).should().getMax();
-    assertThat(actual).isEqualTo(104);
-  }
-
-  @Test
   public void returnsRoutesTotal() {
     // given
     Set<HttpRoute> mockRoutes = mock(Set.class);
@@ -123,6 +110,30 @@ public class PoolingHttpClientConnectionManagerMXBeanTest {
     then(mockConnectionManager).should().getRoutes();
     then(mockRoutes).should().size();
     assertThat(actual).isEqualTo(3);
+  }
+
+  @Test
+  public void setsMaxTotal() {
+    // given
+    int max = 3;
+
+    // when
+    sut.setMaxTotal(max);
+
+    // then
+    verify(mockConnectionManager).setMaxTotal(max);
+  }
+
+  @Test
+  public void setsDefaultMaxPerRoute() {
+    // given
+    int max = 5;
+
+    // when
+    sut.setDefaultMaxPerRoute(max);
+
+    // then
+    verify(mockConnectionManager).setDefaultMaxPerRoute(max);
   }
 
 }

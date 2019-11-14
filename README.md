@@ -9,13 +9,14 @@
 
 View HttpClient metrics from a PoolingHttpClientConnectionManager
 
-- MaxTotal
-- DefaultMaxPerRoute
+- MaxTotal*
+- DefaultMaxPerRoute*
 - Leased
 - Pending
 - Available
-- Max
 - RoutesTotal
+
+Metrics marked with an asterisk are read/write
 
 Available to view via JMX compatible monitoring and profiling tools such as AppDynamics, DataDog and VisualVM
 
