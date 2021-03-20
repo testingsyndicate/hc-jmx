@@ -3,8 +3,8 @@ package com.testingsyndicate.hc.jmx;
 import org.apache.http.conn.routing.HttpRoute;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.apache.http.pool.PoolStats;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.util.Set;
 
@@ -14,14 +14,14 @@ import static org.mockito.BDDMockito.then;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
-public class PoolingHttpClientConnectionManagerMXBeanTest {
+class PoolingHttpClientConnectionManagerMXBeanTest {
 
   private PoolingHttpClientConnectionManager mockConnectionManager;
   private PoolStats mockPoolStats;
   private PoolingHttpClientConnectionManagerMXBean sut;
 
-  @Before
-  public void setUp() {
+  @BeforeEach
+  void beforeEach() {
 
     mockPoolStats = mock(PoolStats.class);
     mockConnectionManager = mock(PoolingHttpClientConnectionManager.class);
@@ -32,7 +32,7 @@ public class PoolingHttpClientConnectionManagerMXBeanTest {
   }
 
   @Test
-  public void returnsMaxTotal() {
+  void returnsMaxTotal() {
     // given
     given(mockConnectionManager.getMaxTotal()).willReturn(99);
 
@@ -45,7 +45,7 @@ public class PoolingHttpClientConnectionManagerMXBeanTest {
   }
 
   @Test
-  public void returnsDefaultMaxPerRoute() {
+  void returnsDefaultMaxPerRoute() {
     // given
     given(mockConnectionManager.getDefaultMaxPerRoute()).willReturn(100);
 
@@ -58,7 +58,7 @@ public class PoolingHttpClientConnectionManagerMXBeanTest {
   }
 
   @Test
-  public void returnsLeased() {
+  void returnsLeased() {
     // given
     given(mockPoolStats.getLeased()).willReturn(101);
 
@@ -71,7 +71,7 @@ public class PoolingHttpClientConnectionManagerMXBeanTest {
   }
 
   @Test
-  public void returnsPending() {
+  void returnsPending() {
     // given
     given(mockPoolStats.getPending()).willReturn(102);
 
@@ -84,7 +84,7 @@ public class PoolingHttpClientConnectionManagerMXBeanTest {
   }
 
   @Test
-  public void returnsAvailable() {
+  void returnsAvailable() {
     // given
     given(mockPoolStats.getAvailable()).willReturn(103);
 
@@ -97,7 +97,7 @@ public class PoolingHttpClientConnectionManagerMXBeanTest {
   }
 
   @Test
-  public void returnsRoutesTotal() {
+  void returnsRoutesTotal() {
     // given
     Set<HttpRoute> mockRoutes = mock(Set.class);
     given(mockRoutes.size()).willReturn(3);
@@ -113,7 +113,7 @@ public class PoolingHttpClientConnectionManagerMXBeanTest {
   }
 
   @Test
-  public void setsMaxTotal() {
+  void setsMaxTotal() {
     // given
     int max = 3;
 
@@ -125,7 +125,7 @@ public class PoolingHttpClientConnectionManagerMXBeanTest {
   }
 
   @Test
-  public void setsDefaultMaxPerRoute() {
+  void setsDefaultMaxPerRoute() {
     // given
     int max = 5;
 

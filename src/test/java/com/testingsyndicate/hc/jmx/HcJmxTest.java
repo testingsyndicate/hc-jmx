@@ -3,8 +3,8 @@ package com.testingsyndicate.hc.jmx;
 import org.apache.http.client.HttpClient;
 import org.apache.http.conn.HttpClientConnectionManager;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 
 import javax.management.*;
@@ -16,14 +16,14 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
-public class HcJmxTest {
+class HcJmxTest {
 
   private MBeanServer mockServer;
   private PoolingHttpClientConnectionManager mockConnectionManager;
   private HcJmx sut;
 
-  @Before
-  public void setup() {
+  @BeforeEach
+  void beforeEach() {
     mockServer = mock(MBeanServer.class);
     mockConnectionManager = mock(PoolingHttpClientConnectionManager.class);
 
@@ -31,7 +31,7 @@ public class HcJmxTest {
   }
 
   @Test
-  public void staticInstanceUsesPlatformMBeanServer() {
+  void staticInstanceUsesPlatformMBeanServer() {
     // given
 
     // when
@@ -43,7 +43,7 @@ public class HcJmxTest {
   }
 
   @Test
-  public void registersMBeanWithName() throws JMException {
+  void registersMBeanWithName() throws JMException {
     // given
 
     // when
@@ -56,7 +56,7 @@ public class HcJmxTest {
   }
 
   @Test
-  public void registersMBeanWithPool() throws JMException {
+  void registersMBeanWithPool() throws JMException {
     // given
 
     // when
@@ -72,7 +72,7 @@ public class HcJmxTest {
   }
 
   @Test
-  public void providesDefaultNameOnRegistration() {
+  void providesDefaultNameOnRegistration() {
     // given
 
     // when
@@ -84,7 +84,7 @@ public class HcJmxTest {
   }
 
   @Test
-  public void unregistersMBean() throws JMException {
+  void unregistersMBean() throws JMException {
     // given
     ObjectName name = ObjectName.getInstance("com.testingsyndicate:name=wibble-wobble");
     when(mockServer.isRegistered(any(ObjectName.class))).thenReturn(true);
@@ -98,7 +98,7 @@ public class HcJmxTest {
   }
 
   @Test
-  public void doesntUnregisterMissingMBean() throws JMException {
+  void doesntUnregisterMissingMBean() throws JMException {
     // given
     ObjectName name = ObjectName.getInstance("com.testingsyndicate:name=wibble-wobble");
     when(mockServer.isRegistered(any(ObjectName.class))).thenReturn(false);
@@ -112,7 +112,7 @@ public class HcJmxTest {
   }
 
   @Test
-  public void wrapsExceptionWhenServerException() throws JMException {
+  void wrapsExceptionWhenServerException() throws JMException {
     // given
     MBeanRegistrationException cause = new MBeanRegistrationException(new RuntimeException());
     when(mockServer.registerMBean(any(), any(ObjectName.class)))
@@ -131,7 +131,7 @@ public class HcJmxTest {
   }
 
   @Test
-  public void throwsExceptionWhenNoManager() {
+  void throwsExceptionWhenNoManager() {
     // given
     HttpClient client = new NoManager();
 
@@ -148,7 +148,7 @@ public class HcJmxTest {
   }
 
   @Test
-  public void throwsExceptionWhenNullManager() {
+  void throwsExceptionWhenNullManager() {
     // given
     HttpClient client = new HasManager(null);
 
@@ -165,7 +165,7 @@ public class HcJmxTest {
   }
 
   @Test
-  public void throwsExceptionWhenNotPool() {
+  void throwsExceptionWhenNotPool() {
     // given
     HttpClient client = new HasManager(mock(HttpClientConnectionManager.class));
 
@@ -182,7 +182,7 @@ public class HcJmxTest {
   }
 
   @Test
-  public void registersMBeanWhenClientContainsPool() throws NotCompliantMBeanException, InstanceAlreadyExistsException, MBeanRegistrationException {
+  void registersMBeanWhenClientContainsPool() throws NotCompliantMBeanException, InstanceAlreadyExistsException, MBeanRegistrationException {
     // given
     HttpClient client = new HasManager(mockConnectionManager);
 
@@ -199,7 +199,7 @@ public class HcJmxTest {
   }
 
   @Test
-  public void registersWithNameWhenClientContainsPool() {
+  void registersWithNameWhenClientContainsPool() {
     // given
     HttpClient client = new HasManager(mockConnectionManager);
 
