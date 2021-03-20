@@ -1,0 +1,80 @@
+plugins {
+  id 'java-library'
+  id 'maven-publish'
+  id 'signing'
+  id 'io.toolebox.git-versioner' version '1.6.5'
+}
+
+group 'com.testingsyndicate'
+
+dependencies {
+  api 'org.apache.httpcomponents:httpclient:4.5'
+
+  testImplementation 'junit:junit:4.12'
+  testImplementation 'org.assertj:assertj-core:3.9.0'
+  testImplementation 'org.mockito:mockito-core:2.15.0'
+}
+
+repositories {
+  mavenCentral()
+}
+
+java {
+  withJavadocJar()
+  withSourcesJar()
+}
+
+versioner {
+  startFrom {
+    major = 3
+  }
+}
+
+publishing {
+  repositories {
+    maven {
+      url = 'https://oss.sonatype.org/service/local/staging/deploy/maven2/'
+      credentials {
+          username = findProperty('publishUsername')
+          password = findProperty('publishPassword')
+      }
+    }
+  }
+  publications {
+    mavenJava(MavenPublication) {
+      from components.java
+      pom {
+        name = 'HC-JMX'
+        description = 'Expose PoolingHttpClientConnectionManager statistics via JMX'
+        url = 'https://github.com/goughy000/hc-jmx'
+        licenses {
+          license {
+            name = 'MIT License'
+            url = 'https://opensource.org/licenses/MIT'
+          }
+        }
+        developers {
+          developer {
+            name = 'Jack Gough'
+            organization = 'Testing Syndicate'
+            organizationUrl = 'https://testingsyndicate.com/'
+          }
+        }
+        scm {
+          connection = 'scm:git:git://github.com/goughy000/hc-jmx.git'
+          developerConnection = 'scm:git:git://github.com/goughy000/hc-jmx.git'
+          url = 'https://github.com/goughy000/hc-jmx.git'
+        }
+      }
+    }
+  }
+}
+
+signing {
+  useInMemoryPgpKeys(decode(findProperty('signingKey')), '')
+  sign publishing.publications.mavenJava
+}
+
+def decode(encoded) {
+  new String(Base64.getDecoder().decode(encoded ?: ''))
+}
