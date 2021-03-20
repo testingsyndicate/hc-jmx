@@ -17,5 +17,4 @@ public interface PoolStatsMXBean {
   int getAvailable();
 
   int getRoutesTotal();
-
 }

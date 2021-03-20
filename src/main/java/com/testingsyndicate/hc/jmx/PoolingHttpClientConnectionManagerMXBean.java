@@ -1,8 +1,7 @@
 package com.testingsyndicate.hc.jmx;
 
-import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
-
 import javax.management.StandardMBean;
+import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 
 class PoolingHttpClientConnectionManagerMXBean extends StandardMBean implements PoolStatsMXBean {
 
@@ -52,5 +51,4 @@ class PoolingHttpClientConnectionManagerMXBean extends StandardMBean implements 
   public int getRoutesTotal() {
     return connectionManager.getRoutes().size();
   }
-
 }

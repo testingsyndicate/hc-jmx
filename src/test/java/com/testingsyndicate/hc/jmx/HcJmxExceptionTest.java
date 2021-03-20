@@ -1,13 +1,13 @@
 package com.testingsyndicate.hc.jmx;
 
-import org.junit.Test;
-
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class HcJmxExceptionTest {
+import org.junit.jupiter.api.Test;
+
+class HcJmxExceptionTest {
 
   @Test
-  public void constructsWithMessage() {
+  void constructsWithMessage() {
     // given
     String message = "wibble";
 
@@ -15,13 +15,11 @@ public class HcJmxExceptionTest {
     HcJmxException actual = new HcJmxException(message);
 
     // then
-    assertThat(actual)
-        .hasMessage(message)
-        .hasNoCause();
+    assertThat(actual).hasMessage(message).hasNoCause();
   }
 
   @Test
-  public void constructsWithMessageAndCause() {
+  void constructsWithMessageAndCause() {
     // given
     String message = "wibble";
     Throwable cause = new RuntimeException();
@@ -30,8 +28,6 @@ public class HcJmxExceptionTest {
     HcJmxException actual = new HcJmxException(message, cause);
 
     // then
-    assertThat(actual)
-        .hasMessage(message)
-        .hasCause(cause);
+    assertThat(actual).hasMessage(message).hasCause(cause);
   }
 }
