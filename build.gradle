@@ -3,6 +3,7 @@ plugins {
   id 'maven-publish'
   id 'signing'
   id 'io.toolebox.git-versioner' version '1.6.5'
+  id 'com.diffplug.spotless' version '5.11.0'
 }
 
 group 'com.testingsyndicate'
@@ -29,6 +30,18 @@ test {
   useJUnitPlatform()
 }
 
+spotless {
+  java {
+    googleJavaFormat()
+    endWithNewline()
+  }
+  groovyGradle {
+    greclipse()
+    indentWithSpaces(2)
+    endWithNewline()
+  }
+}
+
 versioner {
   startFrom {
     major = 3
@@ -40,8 +53,8 @@ publishing {
     maven {
       url = 'https://oss.sonatype.org/service/local/staging/deploy/maven2/'
       credentials {
-          username = findProperty('publishUsername')
-          password = findProperty('publishPassword')
+        username = findProperty('publishUsername')
+        password = findProperty('publishPassword')
       }
     }
   }

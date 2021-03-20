@@ -1,20 +1,19 @@
 package com.testingsyndicate.hc.jmx;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.shouldHaveThrown;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.*;
+
+import java.lang.management.ManagementFactory;
+import javax.management.*;
 import org.apache.http.client.HttpClient;
 import org.apache.http.conn.HttpClientConnectionManager;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
-
-import javax.management.*;
-import java.lang.management.ManagementFactory;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.shouldHaveThrown;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.*;
 
 class HcJmxTest {
 
@@ -51,8 +50,10 @@ class HcJmxTest {
 
     // then
     assertThat(actual.toString())
-        .isEqualTo("org.apache.httpcomponents.httpclient:name=wibble,type=PoolingHttpClientConnectionManager");
-    verify(mockServer).registerMBean(any(PoolingHttpClientConnectionManagerMXBean.class), eq(actual));
+        .isEqualTo(
+            "org.apache.httpcomponents.httpclient:name=wibble,type=PoolingHttpClientConnectionManager");
+    verify(mockServer)
+        .registerMBean(any(PoolingHttpClientConnectionManagerMXBean.class), eq(actual));
   }
 
   @Test
@@ -61,7 +62,8 @@ class HcJmxTest {
 
     // when
     sut.register(mockConnectionManager, "wibble");
-    ArgumentCaptor<PoolingHttpClientConnectionManagerMXBean> captor = ArgumentCaptor.forClass(PoolingHttpClientConnectionManagerMXBean.class);
+    ArgumentCaptor<PoolingHttpClientConnectionManagerMXBean> captor =
+        ArgumentCaptor.forClass(PoolingHttpClientConnectionManagerMXBean.class);
     verify(mockServer).registerMBean(captor.capture(), any(ObjectName.class));
     PoolingHttpClientConnectionManagerMXBean actual = captor.getValue();
 
@@ -80,7 +82,8 @@ class HcJmxTest {
 
     // then
     assertThat(actual.toString())
-        .matches("org\\.apache\\.httpcomponents\\.httpclient:name=default-([a-f0-9-]{36}),type=PoolingHttpClientConnectionManager");
+        .matches(
+            "org\\.apache\\.httpcomponents\\.httpclient:name=default-([a-f0-9-]{36}),type=PoolingHttpClientConnectionManager");
   }
 
   @Test
@@ -115,8 +118,7 @@ class HcJmxTest {
   void wrapsExceptionWhenServerException() throws JMException {
     // given
     MBeanRegistrationException cause = new MBeanRegistrationException(new RuntimeException());
-    when(mockServer.registerMBean(any(), any(ObjectName.class)))
-        .thenThrow(cause);
+    when(mockServer.registerMBean(any(), any(ObjectName.class))).thenThrow(cause);
 
     // when
     try {
@@ -124,9 +126,7 @@ class HcJmxTest {
       shouldHaveThrown(HcJmxException.class);
     } catch (HcJmxException actual) {
       // then
-      assertThat(actual)
-          .hasMessage("Unable to register")
-          .hasCause(cause);
+      assertThat(actual).hasMessage("Unable to register").hasCause(cause);
     }
   }
 
@@ -158,9 +158,7 @@ class HcJmxTest {
       shouldHaveThrown(HcJmxException.class);
     } catch (HcJmxException actual) {
       // then
-      assertThat(actual)
-          .hasMessage("HttpClient has no ConnectionManager")
-          .hasNoCause();
+      assertThat(actual).hasMessage("HttpClient has no ConnectionManager").hasNoCause();
     }
   }
 
@@ -182,13 +180,16 @@ class HcJmxTest {
   }
 
   @Test
-  void registersMBeanWhenClientContainsPool() throws NotCompliantMBeanException, InstanceAlreadyExistsException, MBeanRegistrationException {
+  void registersMBeanWhenClientContainsPool()
+      throws NotCompliantMBeanException, InstanceAlreadyExistsException,
+          MBeanRegistrationException {
     // given
     HttpClient client = new HasManager(mockConnectionManager);
 
     // when
     sut.register(client);
-    ArgumentCaptor<PoolingHttpClientConnectionManagerMXBean> captor = ArgumentCaptor.forClass(PoolingHttpClientConnectionManagerMXBean.class);
+    ArgumentCaptor<PoolingHttpClientConnectionManagerMXBean> captor =
+        ArgumentCaptor.forClass(PoolingHttpClientConnectionManagerMXBean.class);
     verify(mockServer).registerMBean(captor.capture(), any(ObjectName.class));
     PoolingHttpClientConnectionManagerMXBean actual = captor.getValue();
 
@@ -208,7 +209,8 @@ class HcJmxTest {
 
     // then
     assertThat(actual.toString())
-        .isEqualTo("org.apache.httpcomponents.httpclient:name=my-client,type=PoolingHttpClientConnectionManager");
+        .isEqualTo(
+            "org.apache.httpcomponents.httpclient:name=my-client,type=PoolingHttpClientConnectionManager");
   }
 
   private static final class HasManager extends TestClient {
@@ -218,9 +220,7 @@ class HcJmxTest {
     HasManager(HttpClientConnectionManager manager) {
       this.connManager = manager;
     }
-
   }
 
-  private static final class NoManager extends TestClient { }
-
+  private static final class NoManager extends TestClient {}
 }

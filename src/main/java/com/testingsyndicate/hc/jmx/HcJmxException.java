@@ -9,5 +9,4 @@ public class HcJmxException extends RuntimeException {
   HcJmxException(String message, Throwable cause) {
     super(message, cause);
   }
-
 }

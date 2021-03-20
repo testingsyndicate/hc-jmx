@@ -1,8 +1,8 @@
 package com.testingsyndicate.hc.jmx;
 
-import org.junit.jupiter.api.Test;
-
 import static org.assertj.core.api.Assertions.assertThat;
+
+import org.junit.jupiter.api.Test;
 
 class HcJmxExceptionTest {
 
@@ -15,9 +15,7 @@ class HcJmxExceptionTest {
     HcJmxException actual = new HcJmxException(message);
 
     // then
-    assertThat(actual)
-        .hasMessage(message)
-        .hasNoCause();
+    assertThat(actual).hasMessage(message).hasNoCause();
   }
 
   @Test
@@ -30,8 +28,6 @@ class HcJmxExceptionTest {
     HcJmxException actual = new HcJmxException(message, cause);
 
     // then
-    assertThat(actual)
-        .hasMessage(message)
-        .hasCause(cause);
+    assertThat(actual).hasMessage(message).hasCause(cause);
   }
 }
