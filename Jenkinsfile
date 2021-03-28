@@ -6,13 +6,13 @@ pipeline {
   stages {
     stage('Clean') {
       steps {
-        sh 'gradle clean'
+        sh './gradlew clean'
       }
     }
 
     stage('Build') {
       steps {
-        sh 'gradle build'
+        sh './gradlew build'
       }
     }
 
@@ -25,7 +25,7 @@ pipeline {
         KEY = credentials('signing')
       }
       steps {
-        sh 'gradle publish -PpublishUsername=$PUBLISH_USR -PpublishPassword=$PUBLISH_PSW -PsigningKey=$KEY'
+        sh './gradlew publish -PpublishUsername=$PUBLISH_USR -PpublishPassword=$PUBLISH_PSW -PsigningKey=$KEY'
       }
     }
   }
