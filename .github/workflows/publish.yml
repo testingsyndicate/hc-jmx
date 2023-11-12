@@ -1,0 +1,33 @@
+name: Publish
+
+on:
+  release:
+    types: [created]
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout project sources
+        uses: actions/checkout@v4
+
+      - name: Setup Java
+        uses: actions/setup-java@v3
+        with:
+          java-version: 17
+          distribution: temurin
+
+      - name: Setup Gradle
+        uses: gradle/gradle-build-action@v2
+
+      - name: Publish
+        env:
+          PUBLISH_USERNAME: ${{ secrets.publishUsername }}
+          PUBLISH_PASSWORD: ${{ secrets.publishPassword }}
+          SIGNING_KEY: ${{ secrets.signingKey }}
+        run: |
+          ./gradlew clean publish \
+            -PpublishUsername=$PUBLISH_USERNAME \
+            -PpublishPassword=$PUBLISH_PASSWORD \
+            -PsigningKey=$SIGNING_KEY
+
