@@ -1,20 +1,16 @@
 plugins {
   id 'java-library'
+  id 'jvm-test-suite'
   id 'maven-publish'
   id 'signing'
   id 'io.toolebox.git-versioner' version '1.6.5'
-  id 'com.diffplug.spotless' version '5.11.0'
+  id 'com.diffplug.spotless' version '6.22.0'
 }
 
 group 'com.testingsyndicate'
 
 dependencies {
-  api 'org.apache.httpcomponents:httpclient:4.5'
-
-  testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.1'
-  testImplementation 'org.assertj:assertj-core:3.19.0'
-  testImplementation 'org.mockito:mockito-core:3.8.0'
-  testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.1'
+  api 'org.apache.httpcomponents:httpclient:4.5.14'
 }
 
 repositories {
@@ -24,6 +20,20 @@ repositories {
 java {
   withJavadocJar()
   withSourcesJar()
+}
+
+testing {
+  suites {
+    test {
+      useJUnitJupiter()
+      dependencies {
+        implementation 'org.junit.jupiter:junit-jupiter-api:5.10.1'
+        implementation 'org.assertj:assertj-core:3.24.2'
+        implementation 'org.mockito:mockito-core:5.7.0'
+        runtimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.10.1'
+      }
+    }
+  }
 }
 
 test {
@@ -36,7 +46,7 @@ spotless {
     endWithNewline()
   }
   groovyGradle {
-    greclipse()
+    greclipse('4.27')
     indentWithSpaces(2)
     endWithNewline()
   }

@@ -181,7 +181,8 @@ class HcJmxTest {
 
   @Test
   void registersMBeanWhenClientContainsPool()
-      throws NotCompliantMBeanException, InstanceAlreadyExistsException,
+      throws NotCompliantMBeanException,
+          InstanceAlreadyExistsException,
           MBeanRegistrationException {
     // given
     HttpClient client = new HasManager(mockConnectionManager);
